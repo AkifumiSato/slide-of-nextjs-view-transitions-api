@@ -18,6 +18,28 @@ mdc: true
 
 ---
 
+# Profile
+
+- name: 佐藤 昭文（Akifumi Sato）
+  - twitter: akfm_sato
+  - github: AkifumiSato
+  - Web Engineer
+- Activity
+  - https://zenn.dev/akfm
+  - [JS Conf](https://main--remarkable-figolla-a694f0.netlify.app/1)
+  - [Vercel meetup](https://zesty-basbousa-04576f.netlify.app/1)
+
+---
+
+# 先にDEMO
+
+App Routerのsoft navigationをいい感じにアニメーションする
+
+- http://localhost:3000/
+- https://github.com/AkifumiSato/next-view-transition
+
+---
+
 # View Transitions API とは
 
 https://developer.chrome.com/docs/web-platform/view-transitions?hl=ja
@@ -85,6 +107,17 @@ Next.jsはView Transitions APIを考慮して設計・実装されてはいな�
   - https://nuxt.com/docs/getting-started/transitions
 
 ---
+
+# 余談: next-view-transitionsのリリース
+
+本発表資料作成中にNext.jsコアチームメンバーの[shuding](https://twitter.com/shuding_)氏によってリリースされた
+
+https://github.com/shuding/next-view-transitions
+
+- ~~App Routerで扱うのが難しい~~ -> 容易に扱うライブラリが登場
+- 先を越されたので本発表は「`useTransition`すごいね」なお話しとして聞いてください
+
+---
 transition: fade
 ---
 
@@ -94,10 +127,12 @@ transition: fade
 
 - `startTransition`の`Promise`版hooks
   - https://github.com/vercel/next.js/discussions/46300#discussioncomment-5894648
-- `router.push()`と組み合わせれば**遷移の開始〜終了を`Promise`として扱える**
-  - `Promise`を`document.startViewTransition`に渡せばView Transitions APIが扱えるということ
-  - `startTransition`内で発生したレンダリングはsuspend含め全て完了してから反映される
+  - `useTransition`の復習
     - https://zenn.dev/uhyo/books/react-concurrent-handson-2
+    - レンダリングを裏の世界だけで行って反映を遅延させるAPI
+    - suspendを含むレンダリングが全て完了してから描画される
+- `router.push()`によるレンダリングを`transition`とすることで、**遷移の開始〜終了を`Promise`として扱える**
+  - `Promise`を`document.startViewTransition`に渡せる=View Transitions APIが扱える
 
 ---
 
@@ -124,6 +159,29 @@ const transitionPromise: Promise<void> = startTransitionWithCompletion(() => {
 ```
 
 ---
+
+# soft navigationをPromiseにする
+
+`router.push()`によるレンダリングを`transition`を通してPromiseとして扱える
+
+```tsx
+// LinkのonClickを↓してしまえば、View Transitions APIも扱えるはず
+const [_isPending, startTransitionWithCompletion] =
+  useTransitionWithCompletion();
+const onClick = useCallback<React.MouseEventHandler<HTMLAnchorElement>>(
+  (e) => {
+    e.preventDefault();
+    document.startViewTransition(() =>
+      startTransitionWithCompletion(() => {
+        router.push(href);
+      }),
+    );
+  },
+  [router, href, startTransitionWithCompletion],
+);
+```
+
+---
 transition: fade
 ---
 
@@ -139,6 +197,7 @@ https://github.com/AkifumiSato/next-view-transition
 3. CSSでView Transitionsの擬似要素にアニメーションスタイルを定義する
    - `root`のアニメーションを定義
    - 要素間（ヘッダーとか画像とか）のアニメーションを定義
+4. `popstate`イベントで遷移Promiseを作成してブラウザバックにも対応する
 
 ---
 
@@ -153,13 +212,14 @@ https://github.com/AkifumiSato/next-view-transition
    - https://github.com/AkifumiSato/next-view-transition/blob/main/src/app/_lib/document-transition.ts
 3. CSSでView Transitionsの擬似要素にアニメーションスタイルを定義する
    - https://github.com/AkifumiSato/next-view-transition/blob/main/src/app/globals.css
+4. `popstate`イベントで遷移Promiseを作成してブラウザバックにも対応する
+   - https://github.com/AkifumiSato/next-view-transition/blob/main/src/app/_components/back-forward-transition.tsx
 
 ---
 
 # まとめ・感想
 
 - `useTransition`はとても強力なAPI
+  - App RouterがReactの最新機能で作られてるが故、transitionとの組み合わせの可能性はもっとありそう
 - View Transitions APIのアニメーション実装は今までのCSSからすると癖が強く感じるができあがると結構楽に感じる
-- 現状ブラウザバック対応がどうにもならなそうなのでNext.jsの対応が待たれる
-- Nuxtはもっと手厚くサポートされてるのでちょっと羨ましい
 - SafariもView Transitions APIの実装進んでるっぽい（近々リリース？）
