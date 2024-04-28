@@ -20,6 +20,8 @@ mdc: true
 
 # Profile
 
+<div class="flex justify-between items-center w-full">
+
 - name: 佐藤 昭文（Akifumi Sato）
   - twitter: akfm_sato
   - github: AkifumiSato
@@ -28,6 +30,12 @@ mdc: true
   - https://zenn.dev/akfm
   - [JS Conf](https://main--remarkable-figolla-a694f0.netlify.app/1)
   - [Vercel meetup](https://zesty-basbousa-04576f.netlify.app/1)
+
+<div class="flex justify-center w-100">
+  <img src="https://avatars.githubusercontent.com/u/25711332?v=4" width="200">
+</div>
+
+</div>
 
 ---
 
