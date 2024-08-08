@@ -1,7 +1,7 @@
 ---
 theme: default
 # https://unsplash.com/ja/%E5%86%99%E7%9C%9F/%E7%B7%91%E8%B5%A4%E9%9D%92%E3%81%AE%E5%85%89--MzXKfizmQs
-background: /assets/top.png
+background: /top.png
 class: text-center
 highlighter: shiki
 lineNumbers: false

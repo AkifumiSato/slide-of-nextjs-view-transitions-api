@@ -1,5 +1,6 @@
 # Slide Of Next.js View Transitions API
 
-## netlify
+## Slide
 
-https://main--lustrous-marigold-5934a9.netlify.app/
+- [slides.md](./slides.md)
+- [github pages](https://akifumisato.github.io/slide-of-nextjs-view-transitions-api/1)
